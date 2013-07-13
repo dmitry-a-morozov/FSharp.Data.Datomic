@@ -1,21 +1,20 @@
 ﻿
-#r @"Runtime\bin\Debug\FSharp.Data.Datomic.Runtime.dll"
+#r @"TypeProvider\bin\Debug\FSharp.Data.Datomic.dll"
+//#r @"RunTime\bin\Debug\FSharp.Data.Datomic.dll"
+#r @"TypeProvider\bin\Debug\FSharp.Data.Datomic.TypeProvider.dll"
 #load "Config.fs"
 
 open System
 open System.IO
-open Datomic
-
-let uri = UriBuilder("http:", "mitekm-pc2", port).Uri
-let restClient = RestClient(uri, "test")
+open FSharp.Data
+open FSharp.Data.Datomic
 
 let dbName = "seattle"
-restClient.CreateDatabase dbName
-restClient.DatabaseInfo dbName
+HttpClient.storages serviceUri
+HttpClient.createDatabase serviceUri alias dbName
+HttpClient.databaseInfo serviceUri alias dbName "-"
 
-let schema_tx  = 
-    (datomicRootFolder, "samples\seattle\seattle-schema.dtm")
-    |> Path.Combine
-    |> File.ReadAllText
+let schema_tx  = Path.Combine(datomicRootFolder, "samples\seattle\seattle-schema.dtm") |> File.ReadAllText
+HttpClient.transact serviceUri alias dbName schema_tx |> Async.RunSynchronously
 
-restClient.Transact(dbName, schema_tx) |> Async.RunSynchronously
+type Test = DatomicDatabase<"http://localhost:9000/","test","seattle","1000">

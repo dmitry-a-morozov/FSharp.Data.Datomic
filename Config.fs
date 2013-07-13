@@ -10,3 +10,6 @@ let port = 9000
 let alias = "test"
 [<Literal>]
 let url = "datomic:mem://"
+
+let serviceUri = System.UriBuilder("http:", "localhost", port).Uri
+
