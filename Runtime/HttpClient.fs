@@ -6,6 +6,7 @@ open System.Net
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Web
+
 open FSharp.Data
 
 let private httpClient = 
@@ -42,6 +43,7 @@ let transact serverUri storage dbName data =
         use content = new FormUrlEncodedContent(dict["tx-data", data])
         use! response = httpClient.PostAsync(requestUri, content) |> Async.AwaitTask
         return response.EnsureSuccessStatusCode().StatusCode = HttpStatusCode.Created
+        //return response
     }
 
 let q serverUri storage dbName query  =
